@@ -337,11 +337,9 @@
       width:min(96vw,480px);
     }
     .touch button{
-      font-family:'Press Start 2P',monospace;
-      font-size:11px;
+      font-family:system-ui,-apple-system,sans-serif;
+      font-size:34px;
       font-weight:400;
-      letter-spacing:.04em;
-      text-transform:uppercase;
       color:var(--text);
       background:var(--frame);
       border:1px solid rgba(138,43,226,.3);
@@ -349,6 +347,7 @@
       cursor:pointer;
       transition:transform 120ms var(--ease-out), background-color 120ms ease, color 120ms ease;
       border-radius:4px;
+      line-height:1;
     }
     .touch button.wide{
       grid-column:1 / -1;
@@ -356,6 +355,7 @@
       background:rgba(138,43,226,.12);
       border:1px solid rgba(138,43,226,.5);
       color:var(--accent);
+      font-family:'Press Start 2P',monospace;
       font-size:10px;
       letter-spacing:.08em;
     }
@@ -443,10 +443,10 @@
 
   <!-- Touch pad (touch devices only) -->
   <div class="touch" id="touch">
-    <button data-act="left">&larr;</button>
-    <button data-act="rotate">&#x21bb;</button>
-    <button data-act="right">&rarr;</button>
-    <button data-act="down">&darr;</button>
+    <button data-act="left">◀</button>
+    <button data-act="rotate">↻</button>
+    <button data-act="right">▶</button>
+    <button data-act="down">▼</button>
     <button class="wide" data-act="hard">Hard drop</button>
   </div>
 
