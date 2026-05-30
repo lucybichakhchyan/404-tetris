@@ -333,23 +333,32 @@
     .touch-on .touch{
       display:grid;
       grid-template-columns:repeat(4,1fr);
-      gap:8px;
-      width:min(92vw,360px);
+      gap:10px;
+      width:min(96vw,480px);
     }
     .touch button{
-      font-family:'Inter',sans-serif;
-      font-size:10px;
-      font-weight:600;
-      letter-spacing:.08em;
+      font-family:'Press Start 2P',monospace;
+      font-size:11px;
+      font-weight:400;
+      letter-spacing:.04em;
       text-transform:uppercase;
       color:var(--text);
       background:var(--frame);
-      border:1px solid var(--line);
-      min-height:44px;
+      border:1px solid rgba(138,43,226,.3);
+      min-height:72px;
       cursor:pointer;
       transition:transform 120ms var(--ease-out), background-color 120ms ease, color 120ms ease;
+      border-radius:4px;
     }
-    .touch button.wide{ grid-column:1 / -1; }
+    .touch button.wide{
+      grid-column:1 / -1;
+      min-height:60px;
+      background:rgba(138,43,226,.12);
+      border:1px solid rgba(138,43,226,.5);
+      color:var(--accent);
+      font-size:10px;
+      letter-spacing:.08em;
+    }
     .touch button.active{
       background:var(--accent);
       color:#fff;
