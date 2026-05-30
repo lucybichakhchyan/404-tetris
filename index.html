@@ -6,7 +6,7 @@
   <title>404 Tetris</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,700&family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     /* ============================================================
        Brand tokens (from colors_and_type.css on the host page).
@@ -79,29 +79,34 @@
       z-index:100;
     }
     .announce{
-      height:96px;
+      position:fixed;
+      top:8px;
+      left:0;
+      right:0;
+      height:auto;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:5px;
+      gap:4px;
       text-align:center;
       pointer-events:none;
+      z-index:50;
     }
     .announce .aname{
-      font-family:'Playfair Display',serif;
-      font-weight:700;
-      font-size:42px;
-      line-height:1;
-      letter-spacing:-.01em;
+      font-family:'Press Start 2P',monospace;
+      font-weight:400;
+      font-size:16px;
+      line-height:1.4;
+      letter-spacing:.02em;
       opacity:0;
       color:var(--text);
     }
     .announce .apts{
-      font-family:'Inter',sans-serif;
-      font-weight:600;
-      font-size:15px;
-      letter-spacing:.14em;
+      font-family:'Press Start 2P',monospace;
+      font-weight:400;
+      font-size:9px;
+      letter-spacing:.1em;
       color:var(--accent);
       opacity:0;
     }
@@ -220,23 +225,26 @@
     }
     .over.go{ display:flex; }
     .over .ttl{
-      font-family:'Playfair Display',serif;
-      font-weight:700;
-      font-size:26px;
+      font-family:'Press Start 2P',monospace;
+      font-weight:400;
+      font-size:14px;
+      line-height:1.6;
     }
     .over .fin{ text-align:center; line-height:1.7; }
     .over .fin .k{
       display:block;
-      font-size:10px;
-      letter-spacing:.16em;
+      font-family:'Press Start 2P',monospace;
+      font-size:7px;
+      letter-spacing:.06em;
       text-transform:uppercase;
       color:var(--muted);
     }
     .over .fin .v{
-      font-family:'Playfair Display',serif;
-      font-weight:600;
-      font-size:26px;
+      font-family:'Press Start 2P',monospace;
+      font-weight:400;
+      font-size:16px;
       font-variant-numeric:tabular-nums;
+      margin-top:8px;
     }
     .btn{
       font-family:'Inter',sans-serif;
@@ -267,9 +275,10 @@
       padding:9px 11px;
     }
     .next .k,.stat .k{
-      font-size:10px;
-      font-weight:500;
-      letter-spacing:.16em;
+      font-family:'Press Start 2P',monospace;
+      font-size:7px;
+      font-weight:400;
+      letter-spacing:.06em;
       text-transform:uppercase;
       color:var(--muted);
     }
@@ -281,12 +290,12 @@
       padding:9px 11px;
     }
     .stat .v{
-      font-family:'Playfair Display',serif;
-      font-weight:600;
-      font-size:26px;
-      line-height:1.1;
+      font-family:'Press Start 2P',monospace;
+      font-weight:400;
+      font-size:14px;
+      line-height:1.4;
       font-variant-numeric:tabular-nums;
-      margin-top:2px;
+      margin-top:8px;
     }
     .bump{ animation:bump .32s ease-out; }
     @keyframes bump{
