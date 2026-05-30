@@ -23,7 +23,7 @@
       --accent:#8A2BE2;          /* brand blueviolet */
 
       --cell:30px;               /* desktop cell size */
-      --panel:138px;             /* side panel width */
+      --panel:160px;             /* side panel width */
       --gap:18px;                /* board <-> panel gap */
 
       /* strong custom easings (built-in CSS curves lack punch) */
@@ -43,10 +43,10 @@
       transition:opacity 700ms var(--ease-out);
     }
     @media (max-width:540px){
-      :root{ --cell:26px; --panel:118px; --gap:12px; }
+      :root{ --cell:26px; --panel:140px; --gap:12px; }
     }
     @media (max-width:430px){
-      :root{ --cell:23px; --panel:104px; --gap:12px; }
+      :root{ --cell:23px; --panel:124px; --gap:12px; }
     }
 
     *{ box-sizing:border-box; }
@@ -405,7 +405,7 @@
     <div class="panel">
       <div class="next">
         <div class="k">Next</div>
-        <canvas id="next" width="140" height="140"></canvas>
+        <canvas id="next" width="116" height="116"></canvas>
       </div>
       <div class="stat"><div class="k">Score</div><div class="v" id="score">0</div></div>
       <div class="stat"><div class="k">Lines</div><div class="v" id="lines">0</div></div>
@@ -502,7 +502,7 @@
         CELL = cssCell();
         setupCanvas(boardCanvas, bctx, COLS*CELL, ROWS*CELL);
         // next preview canvas is fixed 116x116 css
-        setupCanvas(nextCanvas, nctx, 140, 140);
+        setupCanvas(nextCanvas, nctx, 116, 116);
         sizeConfetti();
         if(grid) render();   // skip until reset() has built the grid
       }
@@ -927,7 +927,7 @@
       }
 
       function drawNext(){
-        nctx.clearRect(0,0,140,140);
+        nctx.clearRect(0,0,116,116);
         if(!nextPiece) return;
         const m = nextPiece.m;
         // bounding box of filled cells
@@ -936,9 +936,9 @@
           if(m[r][c]){ if(r<minR)minR=r; if(r>maxR)maxR=r; if(c<minC)minC=c; if(c>maxC)maxC=c; }
         }
         const wCells = maxC-minC+1, hCells = maxR-minR+1;
-        const cell = Math.min(24, Math.floor(140/Math.max(wCells,hCells)) - 2);
-        const ox = (140 - wCells*cell)/2;
-        const oy = (140 - hCells*cell)/2;
+        const cell = Math.min(24, Math.floor(116/Math.max(wCells,hCells)) - 2);
+        const ox = (116 - wCells*cell)/2;
+        const oy = (116 - hCells*cell)/2;
         const col = COLORS[nextPiece.type];
         for(let r=minR;r<=maxR;r++)for(let c=minC;c<=maxC;c++){
           if(!m[r][c]) continue;
