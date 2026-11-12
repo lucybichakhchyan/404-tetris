@@ -1,0 +1,1101 @@
+/* ============================================================
+   Brand tokens (Lucy Bichakhchyan design system).
+   Inlined here so the game works on its own.
+   ============================================================ */
+:root{
+  --color-bg:#1A1A1A;        /* page canvas */
+  --well:#171717;            /* inside the playfield */
+  --frame:#141414;           /* board frame, panel cards */
+  --line:#333333;            /* hairlines around boxes */
+  --control-border:#77746D;  /* control edges, 3:1 on dark */
+  --grid:#1d1d1d;            /* grid lines on the well */
+  --text:#F6F6F4;
+  --muted:#A6A6A2;
+  --accent:#8A2BE2;          /* brand violet */
+  --accent-hover:#9940E6;    /* lighter violet that keeps white text at 4.96:1 */
+  --focus:#AB8CF0;           /* focus outlines and link underlines */
+
+  /* --cell is set by script.js so the board fits the viewport */
+  --cell:30px;
+  --panel:138px;             /* side panel width */
+  --gap:18px;                /* board <-> panel gap */
+  --top:76px;                /* height of the heading row: eyebrow + title */
+
+  --ease-out:cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (max-width:540px){
+  :root{ --panel:118px; --gap:12px; --top:68px; }
+}
+@media (max-width:430px){
+  :root{ --panel:104px; --gap:10px; }
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--color-bg);
+  color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100dvh;
+  gap:22px;
+  padding:28px 16px;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+}
+@media (max-width:540px){ body{ gap:16px; padding:20px 16px; } }
+
+::selection{ background:var(--accent); color:#fff; }
+:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+
+/* Level-driven vignette — atmosphere behind the game. */
+.vignette{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.72) 100%);
+  opacity:0;
+  transition:opacity 700ms var(--ease-out);
+}
+
+#confetti{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:100;
+}
+
+/* ============================================================
+   Heading row: part of the game screen. Same width as the game,
+   hairline beneath, title on the left, homepage button on the right.
+   Line-clear announcements take the title's place in the same row.
+   ============================================================ */
+.top{
+  position:relative;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  /* board (11 cells + frame) + gap + panel = the game's width */
+  width:calc(var(--cell) * 11 + 22px + var(--gap) + var(--panel));
+  max-width:100%;
+  height:var(--top);
+  border-bottom:1px solid var(--line);
+}
+.slot{
+  position:relative;
+  flex:1 1 auto;
+  min-width:0;
+  height:100%;
+}
+.lost,
+.announce{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+}
+/* the title and the announcement swap with the text-states-swap transition (below) */
+.top.busy .lost{ pointer-events:none; }
+.announce .announce-in{ display:inline-flex; align-items:baseline; gap:inherit; }
+
+.lost-title{
+  margin:0;
+  font-family:'Playfair Display',serif;
+  font-weight:600;
+  font-size:28px;
+  line-height:1.1;
+  letter-spacing:-.01em;
+  color:#fff;
+  white-space:nowrap;
+}
+.lost-title em{ font-style:italic; }
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* Homepage button: framed like the panel boxes and key caps */
+.home{
+  flex:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:36px;
+  padding:0 14px;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  text-decoration:none;
+  color:var(--text);
+  background:var(--frame);
+  border:1px solid var(--control-border);
+  border-radius:2px;
+  transition:border-color 160ms ease, background-color 160ms ease;
+}
+.home:hover,
+.home:focus-visible{ border-color:var(--focus); background:#1E1A26; }
+.touch-on .home{ min-height:44px; }
+
+/* Announcements sit where the title was, left-aligned, violet range only */
+.announce{
+  gap:14px;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.announce .aname{
+  font-family:'Playfair Display',serif;
+  font-weight:700;
+  font-size:28px;
+  line-height:1;
+  letter-spacing:-.01em;
+  color:var(--text);
+}
+.announce .apts{
+  font-weight:600;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-variant-numeric:lining-nums tabular-nums;
+  color:var(--muted);
+}
+/* tiers build with size and italics, inside the brand's violet range */
+.announce.t2 .aname{ color:var(--focus); }
+.announce.t3 .aname{ color:#9940E6; font-size:32px; }
+.announce.t4 .aname{ color:#9940E6; font-size:36px; }
+.announce .aname em{ font-style:italic; }
+@media (max-width:540px){
+  .top{ gap:10px; }
+  .lost-title{ font-size:21px; }
+  .home{ padding:0 10px; }
+  .announce .announce-in{ flex-direction:column; align-items:flex-start; gap:4px; }
+  .announce .aname{ font-size:22px; }
+  .announce.t3 .aname{ font-size:24px; }
+  .announce.t4 .aname{ font-size:26px; }
+  .announce .apts{ font-size:11px; }
+}
+/* ============================================================
+   GAME
+   ============================================================ */
+.game{
+  display:flex;
+  gap:var(--gap);
+  align-items:flex-start;
+}
+
+/* Entrance: staggered once on load */
+.board-frame,
+.panel > *{ animation:enterPop 460ms var(--ease-out) both; }
+.board-frame{ animation-delay:40ms; }
+.panel > *:nth-child(1){ animation-delay:90ms; }
+.panel > *:nth-child(2){ animation-delay:140ms; }
+.panel > *:nth-child(3){ animation-delay:190ms; }
+.panel > *:nth-child(4){ animation-delay:240ms; }
+.panel > *:nth-child(5){ animation-delay:290ms; }
+@keyframes enterPop{
+  from{ opacity:0; transform:translateY(10px) scale(.96); }
+  to{   opacity:1; transform:none; }
+}
+
+.board-frame{
+  position:relative;
+  border:1px solid var(--line);
+  background:var(--frame);
+  padding:10px;
+  line-height:0;
+}
+.shake{ display:block; will-change:transform; }
+canvas#board{ display:block; }
+
+/* overlays sit over the well, inside the 10px frame padding */
+.flash,.banner,.over{
+  position:absolute;
+  inset:10px;
+  pointer-events:none;
+}
+.flash{
+  background:var(--focus);
+  mix-blend-mode:screen;
+  opacity:0;
+}
+.flash.go{ animation:flash .28s ease-out; }
+@keyframes flash{ from{opacity:.35;} to{opacity:0;} }
+
+.banner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.banner span{
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-weight:700;
+  font-size:22px;
+  color:#fff;
+  background:var(--accent);
+  padding:10px 20px 12px;
+  border-radius:2px;
+  white-space:nowrap;
+}
+
+.over{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  line-height:normal;
+  background:rgba(20,20,20,.9);
+}
+.over .ttl{
+  font-family:'Playfair Display',serif;
+  font-weight:700;
+  font-size:30px;
+  line-height:1;
+  color:#fff;
+  margin-bottom:4px;
+}
+.over .fin{ text-align:center; }
+.over .fin .k{
+  display:block;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.over .fin .v{
+  font-family:'Playfair Display',serif;
+  font-weight:600;
+  font-size:28px;
+  line-height:1;
+  font-variant-numeric:lining-nums tabular-nums;
+}
+.btn{
+  margin-top:6px;
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#fff;
+  background:var(--accent);
+  border:none;
+  border-radius:2px;
+  min-height:44px;
+  padding:0 20px;
+  cursor:pointer;
+  line-height:1;
+  transition:background-color 160ms ease, transform 160ms var(--ease-out);
+}
+.btn:hover{ background:var(--accent-hover); }
+.btn:active{ transform:scale(0.97); }
+
+/* ---- Side panel ---- */
+.panel{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:var(--panel);
+  /* exactly the board frame's height: 20 rows + 10px padding and 1px border each side */
+  height:calc(var(--cell) * 20 + 22px);
+  flex:none;
+}
+/* Next takes the spare height; the queue canvas is placed inside it by script.js */
+.next{
+  position:relative;
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+.stat{ flex:none; }
+.next,
+.stat{
+  border:1px solid var(--line);
+  background:var(--frame);
+  padding:10px 11px 11px;
+}
+.next .k,.stat .k{
+  font-size:11px;
+  font-weight:500;
+  line-height:1.3;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.next canvas{ position:absolute; display:block; }
+
+.stat .v{
+  font-family:'Playfair Display',serif;
+  font-weight:600;
+  font-size:26px;
+  line-height:1;
+  font-variant-numeric:lining-nums tabular-nums;
+  margin-top:8px;
+  transform-origin:left center;
+}
+@media (max-width:540px){
+  .panel{ gap:8px; }
+  .next,.stat{ padding:8px 9px 9px; }
+  .k-long{ display:none; }
+  .stat .v{ font-size:22px; margin-top:6px; }
+}
+
+/* ---- Controls legend ---- */
+.keys-hint{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 12px;
+  justify-content:space-between;
+  width:calc(var(--cell) * 11 + 22px + var(--gap) + var(--panel));
+  max-width:100%;
+  font-size:12px;
+  font-weight:500;
+  color:var(--muted);
+}
+.keys-hint span{ display:inline-flex; align-items:center; gap:4px; white-space:nowrap; }
+.keys-hint span kbd:last-of-type{ margin-right:3px; }
+kbd{
+  font-family:'Inter',sans-serif;
+  font-size:11px;
+  font-weight:500;
+  min-width:22px;
+  text-align:center;
+  border:1px solid #4A4A47;
+  border-radius:2px;
+  background:var(--frame);
+  color:var(--text);
+  padding:4px 6px;
+  line-height:1;
+}
+
+/* ---- Touch pad (touch devices only) ---- */
+.touch{ display:none; }
+.touch-on .keys-hint{ display:none; }
+.touch-on .touch{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  width:calc(var(--cell) * 11 + 22px + var(--gap) + var(--panel));
+  max-width:100%;
+}
+.touch button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text);
+  background:var(--frame);
+  border:1px solid var(--control-border);
+  border-radius:2px;
+  min-height:48px;
+  padding:0;
+  cursor:pointer;
+  touch-action:manipulation;
+  transition:transform 120ms var(--ease-out), background-color 120ms ease, border-color 120ms ease;
+}
+.touch svg{
+  width:22px;
+  height:22px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.touch .i-play{ fill:currentColor; stroke-width:1.5; }
+.touch .t-icon{ display:flex; }
+.touch button.wide{ grid-column:1 / span 3; }
+.touch button.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+  transform:scale(0.97);
+}
+
+/* ---- Reduced motion: keep opacity and colour, drop movement ----
+   (board shake, confetti and particles are also off in JS) */
+@media (prefers-reduced-motion: reduce){
+  .board-frame,
+  .panel > *{ animation:enterFade 320ms ease both !important; }
+  @keyframes enterFade{ from{opacity:0;} to{opacity:1;} }
+
+  .vignette{ transition:none; }
+}
+
+/* ============================================================
+   Find the missing page
+   ============================================================ */
+
+
+/* "404 rows left": the one stat that counts down, so it carries the light violet */
+.stat-left .v{ color:var(--focus); }
+.stat-left.done .v{ color:var(--text); }
+
+/* Start prompt, centred in the empty well above the 404 */
+.start{
+  position:absolute;
+  left:10px; right:10px; top:10px;
+  height:calc(var(--cell) * 15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  line-height:1;
+  transition:opacity 260ms var(--ease-out);
+}
+.start.gone{ opacity:0; }
+.start-card{
+  max-width:calc(100% - 24px);
+  width:260px;
+  padding:14px 16px 15px;
+  text-align:center;
+  border:1px solid #4A4A47;
+  border-radius:2px;
+  background:rgba(20,20,20,.92);
+}
+.start-rule{
+  margin:0 0 10px;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--text);
+}
+.start-key{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--focus);
+}
+@media (max-width:540px){
+  .start-card{ padding:12px 12px 13px; }
+  .start-rule{ font-size:12px; }
+}
+
+/* Reward: the board turns into the way home */
+.found{
+  position:absolute;
+  inset:10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:0 16px;
+  line-height:normal;
+  text-align:center;
+  background:rgba(20,20,20,.92);
+}
+.found-title{
+  font-family:'Playfair Display',serif;
+  font-weight:600;
+  font-size:44px;
+  line-height:1;
+  letter-spacing:-.01em;
+  color:#fff;
+}
+.found-title em{ font-style:italic; }
+.found-line{
+  margin:0 0 6px;
+  font-size:14px;
+  color:var(--muted);
+}
+a.btn{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+.text-btn{
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  color:var(--muted);
+  background:none;
+  border:none;
+  min-height:44px;
+  padding:0 12px;
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-color:transparent;
+  text-underline-offset:4px;
+  transition:color 160ms ease, text-decoration-color 160ms ease;
+}
+.text-btn:hover,
+.text-btn:focus-visible{ color:var(--text); text-decoration-color:var(--focus); }
+@media (max-width:540px){
+  .found-title{ font-size:34px; }
+  .found-line{ font-size:13px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .start{ transition:none; }
+}
+
+.k-short{ display:none; }
+@media (max-width:540px){ .k-short{ display:inline; } }
+
+/* ============================================================
+   transitions.dev snippets (copied verbatim from the skill)
+   ============================================================ */
+
+/* ---- Number subtle change: Score and Best (36-number-subtle-change.md) ---- */
+:root {
+  --subtle-dur: 455ms;
+  --subtle-distance: 0.14em;
+  --subtle-blur: 0.042em;
+  --subtle-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-subtle-number {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+}
+.t-subtle-slot { position: relative; display: inline-block; }
+.t-subtle-new { display: inline-block; }
+.t-subtle-old { position: absolute; inset: 0; text-align: center; pointer-events: none; }
+.t-subtle-number.is-animating .t-subtle-new {
+  animation: t-subtle-in var(--subtle-dur) var(--subtle-ease) both;
+}
+.t-subtle-number.is-animating .t-subtle-old {
+  animation: t-subtle-out var(--subtle-dur) var(--subtle-ease) both;
+}
+@keyframes t-subtle-in {
+  from {
+    transform: translateY(calc(var(--subtle-distance) * var(--subtle-dir, 1)));
+    opacity: 0;
+    filter: blur(var(--subtle-blur));
+  }
+}
+@keyframes t-subtle-out {
+  to {
+    transform: translateY(calc(var(--subtle-distance) * var(--subtle-dir, 1) * -1));
+    opacity: 0;
+    filter: blur(var(--subtle-blur));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-subtle-number .t-subtle-new { animation: none !important; }
+  .t-subtle-number .t-subtle-old { display: none; }
+}
+
+/* ---- Spinning counter: 404 rows left (26-spinning-counter.md) ---- */
+:root {
+  --reel-step-dur: 130ms;
+  --reel-stagger: 90ms;
+  --reel-ease: cubic-bezier(0.35, -0.02, 0.43, 1);
+  --reel-cell: 1.2em;
+  --reel-side-scale: 0.7;
+  --reel-side-offset: 0.52em;
+  --reel-side-blur: max(0.067em, 0.171em - 2.1px);
+  --reel-side-opacity: 0.17;
+  --reel-center-scale: 0.9;
+  --reel-center-blur: 0.042em;
+  --reel-antic-dur: 100ms;
+  --reel-antic-scale: 0.94;
+  --reel-antic-lift: 0.125em;
+  --reel-land-dur: 740ms;
+  --reel-land-peak: 1.03;
+}
+
+.t-reel {
+  display: inline-flex;
+  align-items: center;
+  height: var(--reel-cell);
+  font-variant-numeric: tabular-nums;
+}
+.t-reel-col {
+  position: relative;
+  display: inline-block;
+  height: var(--reel-cell);
+  line-height: var(--reel-cell);
+}
+.t-reel-sizer { visibility: hidden; }
+.t-reel-digit {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, filter, opacity;
+}
+.t-reel-sep {
+  display: inline-block;
+  height: var(--reel-cell);
+  line-height: var(--reel-cell);
+}
+/* JS drives every digit per frame from the tokens above. */
+
+@media (prefers-reduced-motion: reduce) {
+  .t-reel-digit { filter: none !important; }
+}
+
+/* ---- Text states swap: title and line-clear announcement (04-text-states-swap.md) ---- */
+:root {
+  --text-swap-dur: 150ms;
+  --text-swap-translate-y: 4px;
+  --text-swap-blur: 2px;
+  --text-swap-ease: ease-in-out;
+}
+
+.t-text-swap {
+  display: inline-block;
+  transform: translateY(0);
+  filter: blur(0);
+  opacity: 1;
+  transition:
+    transform var(--text-swap-dur) var(--text-swap-ease),
+    filter    var(--text-swap-dur) var(--text-swap-ease),
+    opacity   var(--text-swap-dur) var(--text-swap-ease);
+  will-change: transform, filter, opacity;
+}
+.t-text-swap.is-exit {
+  transform: translateY(calc(var(--text-swap-translate-y) * -1));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+}
+.t-text-swap.is-enter-start {
+  transform: translateY(var(--text-swap-translate-y));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-text-swap { transition: none !important; }
+}
+
+/* ---- Modal open / close: Game Over and Found it (06-modal.md) ---- */
+:root {
+  --modal-open-dur: 250ms;
+  --modal-close-dur: 150ms;
+  --modal-scale: 0.96;
+  --modal-scale-close: 0.96;
+  --modal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-modal {
+  transform-origin: center;
+  transform: scale(var(--modal-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-open-dur) var(--modal-ease),
+    opacity   var(--modal-open-dur) var(--modal-ease);
+  will-change: transform, opacity;
+}
+.t-modal.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-modal.is-closing {
+  transform: scale(var(--modal-scale-close));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-close-dur) var(--modal-ease),
+    opacity   var(--modal-close-dur) var(--modal-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-modal { transition: none !important; }
+}
+
+/* ---- Success check: Found it (10-success-check.md) ---- */
+:root {
+  --check-opacity-dur: 500ms;
+  --check-rotate-dur: 500ms;
+  --check-rotate-from: 80deg;
+  --check-bob-dur: 500ms;
+  --check-y-amount: 40px;
+  --check-blur-dur: 500ms;
+  --check-blur-from: 10px;
+  --check-path-dur: 500ms;
+  --check-path-delay: 80ms;
+  --check-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-ease-opacity: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-ease-rotate: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-ease-bob: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --check-ease-path: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Wrapper drives the appear animation; it doesn't own any
+   sizing or color so you can drop in any icon. */
+.t-success-check {
+  display: inline-block;
+  transform-origin: center;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+/* overflow: visible keeps the stroke from clipping while it
+   draws; display: block kills the inline whitespace under SVGs. */
+.t-success-check svg { display: block; overflow: visible; }
+/* Stroke-draw setup. Replace 20 with the result of
+   path.getTotalLength() for your path; round caps mean any
+   sub-pixel overshoot is invisible. */
+.t-success-check svg path {
+  stroke-dasharray: 31;
+  stroke-dashoffset: 31;
+}
+
+.t-success-check[data-state="in"] {
+  animation:
+    t-check-fade   var(--check-opacity-dur) var(--check-ease-opacity) forwards,
+    t-check-rotate var(--check-rotate-dur)  var(--check-ease-rotate)  forwards,
+    t-check-blur   var(--check-blur-dur)    var(--check-ease-out)     forwards,
+    t-check-bob    var(--check-bob-dur)     var(--check-ease-bob)     forwards;
+}
+.t-success-check[data-state="in"] svg path {
+  animation: t-check-draw var(--check-path-dur) var(--check-ease-path) var(--check-path-delay, 0ms) forwards;
+}
+
+@keyframes t-check-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes t-check-rotate {
+  from { transform: rotate(var(--check-rotate-from)); }
+  to   { transform: rotate(0deg); }
+}
+@keyframes t-check-blur {
+  from { filter: blur(var(--check-blur-from)); }
+  to   { filter: blur(0); }
+}
+@keyframes t-check-bob {
+  from { translate: 0 var(--check-y-amount); }
+  to   { translate: 0 0; }
+}
+@keyframes t-check-draw { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .t-success-check { animation: none !important; opacity: 1; }
+  .t-success-check svg path { animation: none !important; stroke-dashoffset: 0 !important; }
+}
+
+/* ---- Toast: LEVEL UP banner (22-toast.md) ---- */
+:root {
+  --toast-open: 350ms;
+  --toast-close: 250ms;
+  --toast-distance: 16px;
+  --toast-blur: 2px;
+  --toast-scale: 0.97;
+  --toast-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-toast {
+  opacity: 0;
+  transform: translateY(var(--toast-distance)) scale(var(--toast-scale));
+  filter: blur(var(--toast-blur));
+  will-change: transform, opacity, filter;
+  transition:
+    opacity var(--toast-close) var(--toast-ease),
+    transform var(--toast-close) var(--toast-ease),
+    filter var(--toast-close) var(--toast-ease);
+}
+.t-toast.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition:
+    opacity var(--toast-open) var(--toast-ease),
+    transform var(--toast-open) var(--toast-ease),
+    filter var(--toast-open) var(--toast-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-toast { transition: none !important; }
+}
+
+/* ---- Learn more hover: Homepage, Play again, Back to the homepage (24-learn-more-hover.md) ---- */
+:root {
+  --learn-shift: 2px;
+  --learn-spread: 8deg;
+  --learn-in: 350ms;
+  --learn-out: 350ms;
+  --learn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-learn-chevron {
+  display: inline-flex;
+  transform: translateX(0);
+  transition: transform var(--learn-out) var(--learn-ease);
+}
+.t-learn-arm {
+  transform-box: view-box;
+  transform-origin: 10px 8px;
+  vector-effect: non-scaling-stroke;
+  transition: transform var(--learn-out) var(--learn-ease);
+}
+.t-learn:hover .t-learn-chevron { transform: translateX(var(--learn-shift)); transition-duration: var(--learn-in); }
+.t-learn:hover .t-learn-arm { transition-duration: var(--learn-in); }
+.t-learn:hover .t-learn-arm-top { transform: rotate(var(--learn-spread)); }
+.t-learn:hover .t-learn-arm-bot { transform: rotate(calc(var(--learn-spread) * -1)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .t-learn-chevron, .t-learn-arm { transition: none !important; }
+}
+
+/* ---- Shimmer text: start prompt (15-shimmer-text.md) ---- */
+:root {
+  --shimmer-dur: 2000ms;
+  --shimmer-base: #7c7c7c;
+  --shimmer-highlight: #0d0d0d;
+  --shimmer-band: 400%;
+  --shimmer-ease: linear;
+}
+
+/* Two-layer construction:
+   1. The base text renders normally in --shimmer-base.
+   2. ::before duplicates it via content: attr(data-text),
+      paints a transparent → highlight → transparent gradient
+      onto it, and clips that gradient to the glyphs via
+      background-clip: text. Animating background-position
+      sweeps the band across the text. */
+.t-shimmer {
+  position: relative;
+  display: inline-block;
+  color: var(--shimmer-base);
+}
+.t-shimmer::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent          0%,
+    transparent         40%,
+    var(--shimmer-highlight) 50%,
+    transparent         60%,
+    transparent        100%
+  );
+  background-size: var(--shimmer-band) 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: t-shimmer var(--shimmer-dur) var(--shimmer-ease) infinite;
+}
+@keyframes t-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-shimmer::before { animation: none !important; }
+}
+
+/* ---- Texts reveal: heading row entrance (18-texts-reveal.md) ---- */
+:root {
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Lines start translated down + blurred + invisible; .is-shown
+   on the parent flips them to their resting state. The second
+   line's transition-delay holds it back by --stagger-stagger
+   so the eye lands on the headline first. */
+.t-stagger-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(var(--stagger-distance));
+  filter: blur(var(--stagger-blur));
+  transition:
+    opacity   var(--stagger-dur) var(--stagger-ease),
+    transform var(--stagger-dur) var(--stagger-ease),
+    filter    var(--stagger-dur) var(--stagger-ease);
+  will-change: transform, opacity, filter;
+}
+.t-stagger-line--2 { transition-delay: var(--stagger-stagger); }
+
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+/* Exit decouples from the stagger: same fade for every line,
+   no Y return, no blur — so the disappearance reads as a
+   single quiet fade instead of a reverse reveal. */
+.t-stagger.is-hiding .t-stagger-line {
+  opacity: 0;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 200ms ease,
+    transform 0s linear,
+    filter 0s linear;
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-stagger-line { transition: none !important; }
+}
+
+/* ---- Icon swap: pause / play button (09-icon-swap.md) ---- */
+:root {
+  --icon-swap-dur: 250ms;
+  --icon-swap-blur: 2px;
+  --icon-swap-start-scale: 0.25;
+  --icon-swap-ease: ease-in-out;
+}
+
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+.t-icon-swap .t-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+  /* No will-change: it would freeze each icon's raster at its 0.25 start
+     scale, so a large icon scales up blurry and pixelated. */
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="b"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="a"] {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-icon-swap .t-icon { transition: none !important; }
+}
+
+
+/* ============================================================
+   Wiring the snippets into this page
+   ============================================================ */
+/* Panel numbers: all three counters share one line box so the boxes stay equal */
+.stat .v{ display:flex; align-items:center; height:1.2em; line-height:1.2em; }
+#left{ color:var(--focus); }
+/* the number snippets set tabular-nums only, which drops Playfair's lining figures */
+.stat .v .t-subtle-number,
+.stat .v .t-reel{ font-variant-numeric:lining-nums tabular-nums; }
+
+/* Shimmer on the start prompt: light violet text, a cream band sweeps across it */
+.start-key.t-shimmer{
+  --shimmer-base: var(--focus);
+  --shimmer-highlight: #FFFFFF;
+}
+
+/* Success check above "Found it." */
+.found .t-success-check svg{ width:64px; height:64px; margin-bottom:-8px; }
+.found .t-success-check path{
+  stroke:var(--focus);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+/* Learn-more chevron inside the framed and violet buttons */
+.t-learn-chevron svg{ width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:round; }
+.t-learn:focus-visible .t-learn-chevron{ transform:translateX(var(--learn-shift)); transition-duration:var(--learn-in); }
+.t-learn:focus-visible .t-learn-arm-top{ transform:rotate(var(--learn-spread)); }
+.t-learn:focus-visible .t-learn-arm-bot{ transform:rotate(calc(var(--learn-spread) * -1)); }
+.btn .t-learn-chevron{ margin-left:8px; }
+
+/* Texts reveal lines keep their own layout */
+.home.t-stagger-line{ display:inline-flex; }
+.slot.t-stagger-line{ display:block; }
+
+/* ============================================================
+   Review fixes (design-taste-frontend review)
+   ============================================================ */
+/* 1. Small phones: the title wraps to two lines instead of running under the button */
+@media (max-width:360px){
+  .lost-title{ white-space:normal; font-size:19px; line-height:1.15; }
+}
+
+/* 2. The heading's entrance only hides it once the script is running */
+html:not(.js) .t-stagger-line{ opacity:1; transform:none; filter:none; }
+
+/* 5. The board takes keyboard focus */
+#board:focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
+
+/* 6. Phones: the start card reads left-aligned */
+@media (max-width:540px){
+  .start-card{ text-align:left; }
+}
+
+/* ============================================================
+   Critique fixes (impeccable critique, second run)
+   ============================================================ */
+/* P0: at 320px the panel can't hold Next plus four stat boxes; Best moves to Game Over only */
+@media (max-width:360px){
+  .panel > .stat:last-child{ display:none; }
+  .next{ min-height:64px; }
+  .stat .v{ font-size:18px; }
+}
+
+/* P1: visible "( page not found )" eyebrow above the title */
+.lost-in{ text-align:left; }
+.eyebrow{
+  margin:0 0 6px;
+  font-size:11px;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+@media (max-width:540px){ .eyebrow{ margin-bottom:5px; } }
+
+/* P1: Game Over shows progress and a way home */
+.over .ttl em{ font-style:italic; }
+.over .found-line{ margin:0; text-align:center; padding:0 12px; }
+.fin-row{ display:flex; gap:28px; }
+@media (max-width:540px){
+  .over{ gap:10px; }
+  .over .ttl{ font-size:26px; }
+  .over .fin .v{ font-size:22px; }
+}
+
+/* ============================================================
+   Critique fixes (third run)
+   ============================================================ */
+/* Rows left is the goal: it leads the panel and reads larger */
+.stat-left .v{ font-size:40px; }
+.stat-best[hidden]{ display:none; }
+
+/* Tall phones: the panel becomes one row above the board, so the board gets the full width */
+@media (max-width:540px) and (min-height:700px){
+  .game{ flex-direction:column; align-items:stretch; gap:8px; width:calc(var(--cell) * 11 + 22px); }
+  :root{ --panel:0px; --gap:0px; }
+  .panel{ order:-1; flex-direction:row; width:auto; height:auto; gap:8px; }
+  .panel > *{ flex:1 1 0; min-width:0; }
+  .panel .stat-best{ display:none; }          /* Best shows on Game Over */
+  .next{ min-height:0; }
+  .stat-left .v{ font-size:26px; }
+  /* the heading row is the board's width here, so the title wraps */
+  .lost-title{ white-space:normal; font-size:19px; line-height:1.15; }
+  .stat-left .k-short{ display:none; }
+  .stat-left .k-row{ display:inline; }
+}
+.k-row{ display:none; }
